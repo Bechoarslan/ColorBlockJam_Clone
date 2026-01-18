@@ -29,14 +29,20 @@ MonoBehaviour:
     referenceMode: 2
     serializationDepthLimit: 64
     assemblyNames:
+    - UniTask
     - Assembly-CSharp-firstpass
+    - UniTask.Linq
     - Cinemachine
     - VContainer
     - PPv2URPConverters
     - Assembly-CSharp
     - Sirenix.OdinInspector.CompatibilityLayer.Editor
     - VContainer.Editor
+    - UniTask.Addressables
+    - UniTask.Editor
     - Sirenix.OdinInspector.CompatibilityLayer
+    - UniTask.TextMeshPro
+    - UniTask.DOTween
     - Sirenix.OdinInspector.Modules.UnityMathematics
     showAdvancedSettings: 0
   addMgrToSceneAutomatically: 0

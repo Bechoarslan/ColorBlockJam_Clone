@@ -16,9 +16,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ScreenPosition",
+                    "name": "DeltaPosition",
                     "type": "Value",
                     "id": "1ad02eaa-b851-4ba5-bc58-880a00b1930b",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "ScreenPosition",
+                    "type": "Value",
+                    "id": "1e1794f9-e625-465a-b862-8a2c1f909360",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
@@ -51,7 +60,18 @@
                 {
                     "name": "",
                     "id": "e4d609eb-382f-4c37-abd8-db7732e699ef",
-                    "path": "",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DeltaPosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9d811d75-edf6-4997-81f1-4a9ddfeb4339",
+                    "path": "<Mouse>/position",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

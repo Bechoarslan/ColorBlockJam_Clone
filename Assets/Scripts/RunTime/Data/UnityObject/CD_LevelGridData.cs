@@ -5,8 +5,11 @@ using UnityEngine;
 namespace RunTime.Data.UnityObject
 {
     [CreateAssetMenu(fileName = "CD_LevelData", menuName = "CD_LevelData", order = 0)]
-    public class CD_LevelData : ScriptableObject
+    public class CD_LevelGridData : ScriptableObject
     {
-        public List<LevelData> Levels;
+        
+        public List<LevelDataList> Levels;
+        
+        
     }
 }

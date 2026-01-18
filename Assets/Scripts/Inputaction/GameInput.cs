@@ -102,9 +102,18 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""ScreenPosition"",
+                    ""name"": ""DeltaPosition"",
                     ""type"": ""Value"",
                     ""id"": ""1ad02eaa-b851-4ba5-bc58-880a00b1930b"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""ScreenPosition"",
+                    ""type"": ""Value"",
+                    ""id"": ""1e1794f9-e625-465a-b862-8a2c1f909360"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -137,7 +146,18 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""e4d609eb-382f-4c37-abd8-db7732e699ef"",
-                    ""path"": """",
+                    ""path"": ""<Mouse>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DeltaPosition"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9d811d75-edf6-4997-81f1-4a9ddfeb4339"",
+                    ""path"": ""<Mouse>/position"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -153,6 +173,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         // Input
         m_Input = asset.FindActionMap("Input", throwIfNotFound: true);
         m_Input_Tap = m_Input.FindAction("Tap", throwIfNotFound: true);
+        m_Input_DeltaPosition = m_Input.FindAction("DeltaPosition", throwIfNotFound: true);
         m_Input_ScreenPosition = m_Input.FindAction("ScreenPosition", throwIfNotFound: true);
     }
 
@@ -235,6 +256,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Input;
     private List<IInputActions> m_InputActionsCallbackInterfaces = new List<IInputActions>();
     private readonly InputAction m_Input_Tap;
+    private readonly InputAction m_Input_DeltaPosition;
     private readonly InputAction m_Input_ScreenPosition;
     /// <summary>
     /// Provides access to input actions defined in input action map "Input".
@@ -251,6 +273,10 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Input/Tap".
         /// </summary>
         public InputAction @Tap => m_Wrapper.m_Input_Tap;
+        /// <summary>
+        /// Provides access to the underlying input action "Input/DeltaPosition".
+        /// </summary>
+        public InputAction @DeltaPosition => m_Wrapper.m_Input_DeltaPosition;
         /// <summary>
         /// Provides access to the underlying input action "Input/ScreenPosition".
         /// </summary>
@@ -284,6 +310,9 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @Tap.started += instance.OnTap;
             @Tap.performed += instance.OnTap;
             @Tap.canceled += instance.OnTap;
+            @DeltaPosition.started += instance.OnDeltaPosition;
+            @DeltaPosition.performed += instance.OnDeltaPosition;
+            @DeltaPosition.canceled += instance.OnDeltaPosition;
             @ScreenPosition.started += instance.OnScreenPosition;
             @ScreenPosition.performed += instance.OnScreenPosition;
             @ScreenPosition.canceled += instance.OnScreenPosition;
@@ -301,6 +330,9 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @Tap.started -= instance.OnTap;
             @Tap.performed -= instance.OnTap;
             @Tap.canceled -= instance.OnTap;
+            @DeltaPosition.started -= instance.OnDeltaPosition;
+            @DeltaPosition.performed -= instance.OnDeltaPosition;
+            @DeltaPosition.canceled -= instance.OnDeltaPosition;
             @ScreenPosition.started -= instance.OnScreenPosition;
             @ScreenPosition.performed -= instance.OnScreenPosition;
             @ScreenPosition.canceled -= instance.OnScreenPosition;
@@ -351,6 +383,13 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnTap(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "DeltaPosition" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDeltaPosition(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "ScreenPosition" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
