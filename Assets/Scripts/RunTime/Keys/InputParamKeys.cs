@@ -6,6 +6,6 @@ namespace RunTime.Keys
 {
     public struct InputParamKeys
     {
-        public Vector2Int InputVector;
+        public Vector2 InputVector;
     }
 }

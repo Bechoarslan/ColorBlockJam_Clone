@@ -105,7 +105,7 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""name"": ""DeltaPosition"",
                     ""type"": ""Value"",
                     ""id"": ""1ad02eaa-b851-4ba5-bc58-880a00b1930b"",
-                    ""expectedControlType"": ""Vector2"",
+                    ""expectedControlType"": ""Axis"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true

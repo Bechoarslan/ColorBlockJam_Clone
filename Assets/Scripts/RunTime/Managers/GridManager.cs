@@ -101,22 +101,28 @@ namespace RunTime.Managers
 
         }
 
-        public void ChangeCellOccupiedSitutation(Vector2Int startPos, Vector2Int endPos)
+        public void DeleteGridPos(Vector2Int gridPosition)
         {
-            if(_gridDictionary.ContainsKey(startPos)) 
+            if (_gridDictionary.ContainsKey(gridPosition))
             {
-                _gridDictionary[startPos] = false;
-            }
-            if(_gridDictionary.ContainsKey(endPos)) 
-            {
-                _gridDictionary[endPos] = true;
+                _gridDictionary[gridPosition] = false;
             }
         }
 
         [Button]
-        public bool IsCellOccupied(Vector2Int gridPos)
+        public bool IsCellOccupied(Vector2 gridPos)
         {
-            return _gridDictionary.GetValueOrDefault(gridPos, true); // Return true if the cell is out of bounds
+             var newGridPos = new Vector2Int(Mathf.RoundToInt(gridPos.x),Mathf.RoundToInt( gridPos.y));
+            if (_gridDictionary.TryGetValue(newGridPos, out var occupied))
+            {
+                return occupied;
+            }
+            return true;
+          
+            
         }
+
+
+        
     }
 }
