@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using RunTime.Interfaces;
 using RunTime.Keys;
 using RunTime.Managers;
 using UnityEngine;
@@ -9,79 +11,132 @@ namespace RunTime.Controllers
         [SerializeField] private GridManager gridManager;
 
         private Transform _selectedObject;
-   
+        private List<Vector2Int> _collisionOffsets = new List<Vector2Int>();
+
         public void OnGetSelectedObject(GameObject selectedObj)
         {
             _selectedObject = selectedObj.transform;
-         
+            _collisionOffsets.Clear();
+            
+            // Main object is always at (0,0) relative to itself
+
+            // Register Group Shape from BlockVectorListKeys relative to main object
+            var blockComp = selectedObj.GetComponent<IBlock>();
+            if (blockComp != null)
+            {
+                var relativeOffsets = new BlockVectorListKeys().OnRegisterVectorList(blockComp.BlockType,_selectedObject.transform.eulerAngles.y);
+                if(relativeOffsets != null)
+                {
+                    _collisionOffsets.AddRange(relativeOffsets);
+                }
+            }
+            
+        
+            // Un-occupy current cells for the whole group
+            Vector2Int currentGridPos = new Vector2Int(Mathf.RoundToInt(_selectedObject.position.x), Mathf.RoundToInt(_selectedObject.position.z));
+            foreach (var offset in _collisionOffsets)
+            {
+                gridManager.ChangeOccupiedCell(currentGridPos + offset, false);
+            }
         }
 
         public void OnGetInputParams(InputParamKeys inputParamKeys)
         {
             if (_selectedObject == null) return;
-
+            
             Vector3 currentPos = _selectedObject.position;
             Vector3 targetInput = new Vector3(inputParamKeys.InputVector.x, currentPos.y, inputParamKeys.InputVector.y);
 
-            // Resolve X Axis Movement
-            float nextX = GetValidEndPosition(currentPos.x, targetInput.x, currentPos.z, true);
+            // Calculate valid position for the PARENT object. 
+            // The collision check inside creates the group virtually using offsets.
+            float nextX = GetValidGroupPosition(currentPos.x, targetInput.x, currentPos.z, true);
+           // float nextZ = GetValidGroupPosition(currentPos.z, targetInput.z, nextX, false);
 
-            // Resolve Z Axis Movement (using the new X position for accurate column checking)
-            float nextZ = GetValidEndPosition(currentPos.z, targetInput.z, nextX, false);
-
-            _selectedObject.position = new Vector3(nextX, currentPos.y, nextZ);
+            _selectedObject.position = new Vector3(nextX, currentPos.y, 0);
         }
 
-        private float GetValidEndPosition(float currentVal, float targetVal, float otherAxisVal, bool isXAxis)
+        private float GetValidGroupPosition(float currentAnchorVal, float targetAnchorVal, float otherAxisAnchorVal, bool isXAxis)
         {
-            int currentGridIdx = Mathf.RoundToInt(currentVal);
-            int otherGridIdx = Mathf.RoundToInt(otherAxisVal);
+            int currentAnchorGridIdx = Mathf.RoundToInt(currentAnchorVal);
+            Debug.Log("Selected Object X Value:" + currentAnchorGridIdx + " Target X Value:" + targetAnchorVal);
+            float diff = targetAnchorVal - currentAnchorGridIdx;
             
-            float diff = targetVal - currentGridIdx;
-            
-            // If very close to center and no input change, stay.
-            if (Mathf.Abs(diff) < 0.01f) return targetVal;
-
+           
+            if (Mathf.Abs(diff) < 0.01f)
+            {
+                
+                return targetAnchorVal;
+            }
+        
             int dir = (diff > 0) ? 1 : -1;
             
-            // Check immediate neighbor blockage
-            Vector2Int checkPos = isXAxis 
-                ? new Vector2Int(currentGridIdx + dir, otherGridIdx) 
-                : new Vector2Int(otherGridIdx, currentGridIdx + dir);
-                
-            if (gridManager.IsCellOccupied(checkPos))
+            // Check immediate neighbor blockage to prevent entering occupied cells
+            int nextCellIndex = currentAnchorGridIdx + dir;
+            if (IsGroupBlocked(nextCellIndex, otherAxisAnchorVal, isXAxis))
             {
-                // If moving towards blocked neighbor, clamp at the current cell center.
-                // This creates a hard stop "snap" effect against the occupied block.
-                if (dir == 1 && targetVal > currentGridIdx) return currentGridIdx;
-                if (dir == -1 && targetVal < currentGridIdx) return currentGridIdx;
+                Debug.Log("Blocked at immediate neighbor cell:" + nextCellIndex);
+                return currentAnchorGridIdx;
+            }
+
+            int targetAnchorGridIdx = Mathf.RoundToInt(targetAnchorVal);
+            int steps = Mathf.Abs(targetAnchorGridIdx - currentAnchorGridIdx);
+            
+            int lastValidGridIdx = currentAnchorGridIdx;
+            
+            for (int i = 1; i <= steps; i++)
+            {
+                int checkGridIdx = currentAnchorGridIdx + (dir * i);
+
+                if (IsGroupBlocked(checkGridIdx, otherAxisAnchorVal, isXAxis))
+                {
+                    return lastValidGridIdx; 
+                }
+                lastValidGridIdx = checkGridIdx;
             }
             
-            // Handle multi-step fast movement (skipping cells)
-            int targetGridIdx = Mathf.RoundToInt(targetVal);
-            int steps = Mathf.Abs(targetGridIdx - currentGridIdx);
-            
-            int checkGridIdx = currentGridIdx;
-            for (int i = 0; i < steps; i++)
-            {
-                checkGridIdx += dir;
-                Vector2Int pos = isXAxis
-                    ? new Vector2Int(checkGridIdx, otherGridIdx)
-                    : new Vector2Int(otherGridIdx, checkGridIdx);
+            return targetAnchorVal;
+        }
 
-                if (gridManager.IsCellOccupied(pos))
+        private bool IsGroupBlocked(float anchorMainAxisVal, float anchorOtherAxisVal, bool isXAxis)
+        {
+            int mainIdx = Mathf.RoundToInt(anchorMainAxisVal);
+            int otherIdx = Mathf.RoundToInt(anchorOtherAxisVal); 
+
+            // Check if ANY part of the group (defined by _collisionOffsets) would land on an occupied cell
+            for (int i = 0; i < _collisionOffsets.Count; i++)
+            {
+                Vector2Int offset = _collisionOffsets[i];
+                
+                int checkX = isXAxis ? mainIdx + offset.x : otherIdx + offset.x; 
+                int checkZ = isXAxis ? otherIdx + offset.y : mainIdx + offset.y; // offset.y corresponds to Z in world
+
+                Vector2Int checkGridPos = new Vector2Int(checkX, checkZ);
+
+                if (gridManager.IsCellOccupied(checkGridPos))
                 {
-                    // Blocked at checkGridIdx. The last valid pos was checkGridIdx - dir.
-                    return (checkGridIdx - dir);
+                    return true;
                 }
             }
-            
-            return targetVal;
+            return false;
         }
 
         public void OnSelectedObjectReleased()
         {
-            _selectedObject = null;
+            if (_selectedObject != null)
+            {
+                // Snap parent to nearest grid
+                Vector2Int releasedGridPos = new Vector2Int(Mathf.RoundToInt(_selectedObject.position.x), Mathf.RoundToInt(_selectedObject.position.z));
+                _selectedObject.position = new Vector3(releasedGridPos.x, _selectedObject.position.y, releasedGridPos.y);
+                
+                // Re-occupy all cells
+                foreach (var offset in _collisionOffsets)
+                {
+                    gridManager.ChangeOccupiedCell(releasedGridPos + offset, true);
+                }
+                
+                _selectedObject = null;
+                _collisionOffsets.Clear();
+            }
         }
     }
 }

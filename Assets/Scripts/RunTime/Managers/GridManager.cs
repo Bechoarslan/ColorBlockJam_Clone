@@ -101,11 +101,11 @@ namespace RunTime.Managers
 
         }
 
-        public void DeleteGridPos(Vector2Int gridPosition)
+        public void ChangeOccupiedCell(Vector2Int gridPosition,bool occupied)
         {
             if (_gridDictionary.ContainsKey(gridPosition))
             {
-                _gridDictionary[gridPosition] = false;
+                _gridDictionary[gridPosition] = occupied;
             }
         }
 

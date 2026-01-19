@@ -29,9 +29,9 @@ MonoBehaviour:
       GridPosition: {x: 4, y: 4}
     - IsOccupied: 0
       GridPosition: {x: 0, y: 3}
-    - IsOccupied: 1
+    - IsOccupied: 0
       GridPosition: {x: 1, y: 3}
-    - IsOccupied: 1
+    - IsOccupied: 0
       GridPosition: {x: 2, y: 3}
     - IsOccupied: 0
       GridPosition: {x: 3, y: 3}
@@ -39,7 +39,7 @@ MonoBehaviour:
       GridPosition: {x: 4, y: 3}
     - IsOccupied: 1
       GridPosition: {x: 0, y: 2}
-    - IsOccupied: 1
+    - IsOccupied: 0
       GridPosition: {x: 1, y: 2}
     - IsOccupied: 0
       GridPosition: {x: 2, y: 2}
