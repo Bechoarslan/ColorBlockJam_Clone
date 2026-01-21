@@ -50,9 +50,9 @@ namespace RunTime.Controllers
             // Calculate valid position for the PARENT object. 
             // The collision check inside creates the group virtually using offsets.
             float nextX = GetValidGroupPosition(currentPos.x, targetInput.x, currentPos.z, true);
-           // float nextZ = GetValidGroupPosition(currentPos.z, targetInput.z, nextX, false);
+            float nextZ = GetValidGroupPosition(currentPos.z, targetInput.z, nextX, false);
 
-            _selectedObject.position = new Vector3(nextX, currentPos.y, 0);
+            _selectedObject.position = new Vector3(nextX, currentPos.y, nextZ);
         }
 
         private float GetValidGroupPosition(float currentAnchorVal, float targetAnchorVal, float otherAxisAnchorVal, bool isXAxis)

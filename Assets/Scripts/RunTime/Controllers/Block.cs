@@ -1,5 +1,6 @@
 using RunTime.Enums;
 using RunTime.Interfaces;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace RunTime.Controllers
@@ -8,5 +9,7 @@ namespace RunTime.Controllers
     {
         public BlockType Type;
         public BlockType BlockType => Type;
+        
+        
     }
 }

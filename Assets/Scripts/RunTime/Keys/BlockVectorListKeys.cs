@@ -13,24 +13,24 @@ namespace RunTime.Keys
             switch (blockType)
             {
                 case BlockType.SingleBlock:
-                    vectorList.Add(new Vector2Int(0, 0));
+                 
                     break;
                 case BlockType.TwoLinearBlock:
-                    vectorList.Add(new Vector2Int(0, 0));
+                  
                     vectorList.Add(new Vector2Int(0,1));
                     break;
                 case BlockType.ThreeLinearBlock:
-                    vectorList.Add(new Vector2Int(0, 0));
+              
                     vectorList.Add(new Vector2Int(0,1));
                     vectorList.Add(new Vector2Int(0,2));
                     break;
                 case BlockType.LBlock:
-                    vectorList.Add(new Vector2Int(0, 0));
-                    vectorList.Add(new Vector2Int(0,1));
+                  
                     vectorList.Add(new Vector2Int(1,0));
+                    vectorList.Add(new Vector2Int(0,1));
                     break;
                 case BlockType.UBlock:
-                    vectorList.Add(new Vector2Int(0, 0));
+                
                     vectorList.Add(new Vector2Int(0,1));
                     vectorList.Add(new Vector2Int(-1,1));
                     vectorList.Add(new Vector2Int(0,-1));

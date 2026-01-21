@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Blocks:
   - Type: 0
-    Prefab: {fileID: 6386008171026607821, guid: e9894496cd59b4ff3a9867754a112f92,
+    Prefab: {fileID: 5604765554644390311, guid: e9894496cd59b4ff3a9867754a112f92,
       type: 3}
   - Type: 1
-    Prefab: {fileID: 6308042683682696767, guid: a3f588965dd974942bdaff2dfe3e9a4f,
+    Prefab: {fileID: 2071731054439557046, guid: e991c9f47cfab40d8b046084037cc8db,
       type: 3}
   - Type: 2
     Prefab: {fileID: 7003199833896822651, guid: 7d9515ffbe6164c3595027b4f324b8bc,
