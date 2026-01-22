@@ -15,7 +15,7 @@ namespace RunTime.Managers
 
         #region Serialized Variables
 
-        [SerializeField] private CD_LevelGridData levelGridData;
+        [SerializeField] private CD_LevelData levelData;
         [SerializeField] private Transform gridParent;
         [SerializeField] private BlockMoverController blockMover;
       
@@ -36,7 +36,7 @@ namespace RunTime.Managers
 
         private void GetData()
         {
-            var data = levelGridData.Levels[0].levels;
+            var data = levelData.Levels[0].levels;
             foreach (var levelData in data)
             {
                 _gridDictionary.Add(new Vector2Int((int)levelData.GridPosition.x,(int)levelData.GridPosition.y),levelData.IsOccupied);
@@ -66,40 +66,7 @@ namespace RunTime.Managers
         {
             UnSubscribeEvents();
         }
-        private void CreateGrid()
-        {
-            if (levelGridData.Levels[0].levels.Count > 0)
-            {
-                levelGridData.Levels[0].levels.Clear();
-            }
-            var data = levelGridData.Levels[0];
-            var column = data.Column;
-            var row = data.Row;
-            for (int z = row - 1 ; z >= 0 ; z--) 
-            {
-                for (int x = 0; x < column; x++)
-                {
-                    var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                   
-                    cube.transform.parent = gridParent;
-                    cube.transform.localPosition = new Vector3(x ,0, z);
-                    var getRandomBool = Convert.ToBoolean(UnityEngine.Random.Range(0, 2));
-                    var newData = new LevelGridData
-                    {
-                        GridPosition = new Vector2(x, z),
-                        IsOccupied = getRandomBool
-                    };
-                    _gridDictionary.Add(new Vector2Int(x,z), getRandomBool);
-                    if (getRandomBool)
-                    {
-                        var newCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        newCube.transform.position = new Vector3(x, 0.5f, z);
-                    }
-                    data.levels.Add(newData);
-                }
-            }
-
-        }
+        
 
         public void ChangeOccupiedCell(Vector2Int gridPosition,bool occupied)
         {

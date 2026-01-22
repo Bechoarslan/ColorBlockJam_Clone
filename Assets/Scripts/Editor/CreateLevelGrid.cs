@@ -19,7 +19,7 @@ namespace Editor
         
         public void Create()
         {
-            
+
             
             var totalColumn = Editor.Column + 2;
             var totalRow = Editor.Row + 2;

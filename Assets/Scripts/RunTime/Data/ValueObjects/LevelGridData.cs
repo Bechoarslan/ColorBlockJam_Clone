@@ -19,7 +19,7 @@ namespace RunTime.Data.ValueObjects
         public int Row;
         public int Column;
         public int LevelID;
-        public List<LevelGridData> levels;
+        public List<LevelGridData> levels = new List<LevelGridData>();
     }
     
     

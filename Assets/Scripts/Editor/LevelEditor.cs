@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using RunTime.Controllers;
 using RunTime.Data.UnityObject;
+using RunTime.Data.ValueObjects;
 using RunTime.Enums;
 using RunTime.Keys;
 using UnityEditor;
@@ -14,7 +16,7 @@ namespace Editor
 
         #region Data Variables
 
-        public CD_LevelGridData LevelData { get; set; }
+        public CD_LevelData LevelData  { get; set; }
         public CD_BlockData BlockData { get; set; }
         public CD_ColorData ColorData { get; set; }
 
@@ -64,7 +66,11 @@ namespace Editor
             _visualGridDrawer = new VisualGridDrawer(this);
             _prefabInspector = new PrefabInspector(this);
             _createLevelGrid = new CreateLevelGrid(this);
+            BlockData = Resources.Load<CD_BlockData>("CD_BlockData");
+            ColorData = Resources.Load<CD_ColorData>("CD_ColorData");
+            LevelData = Resources.Load<CD_LevelData>("CD_LevelData");
             
+
         }
         private void OnDisable()
         {
@@ -128,7 +134,7 @@ namespace Editor
             DrawDescriptionText("Data Settings");
             DrawBox(5);
             EditorGUIUtility.labelWidth = 100;
-            LevelData = (CD_LevelGridData)EditorGUILayout.ObjectField("Level Data", LevelData, typeof(CD_LevelGridData),
+            LevelData = (CD_LevelData)EditorGUILayout.ObjectField("Level Data", LevelData, typeof(CD_LevelData),
                 true, GUILayout.Width(200));
             BlockData = (CD_BlockData)EditorGUILayout.ObjectField("Block Data", BlockData, typeof(CD_BlockData), true,
                 GUILayout.Width(200));
@@ -191,6 +197,7 @@ namespace Editor
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Save", GUILayout.ExpandWidth(true), GUILayout.Height(30)))
             {
+                SaveData();
             }
 
             if (GUILayout.Button("Load ", GUILayout.ExpandWidth(true), GUILayout.Height(30)))
@@ -202,7 +209,43 @@ namespace Editor
             _prefabInspector.DrawRotatedPreview(BlockData.Blocks[(int)SelectedBlockType].Prefab, CurrentRotationY);
         }
 
-        
+        private void SaveData()
+        {
+            foreach (var levelList in LevelData.Levels)
+            {
+                if(levelList != null && levelList.LevelID == LevelID)
+                {
+                    LevelData.Levels.Remove(levelList);
+                    break;
+                }
+            }
+            var newLevel = new LevelDataList
+            {
+                LevelID = LevelID,
+                Column = Column,
+                Row = Row
+            };
+            
+
+            foreach (var cell in ActiveCellDic)
+            {
+                var newGridData = new LevelGridData
+                {
+                    GridPosition = cell.Key,
+                    IsOccupied = cell.Value
+                };
+                newLevel.levels.Add(newGridData);
+                
+            }
+            
+            LevelData.Levels.Add(newLevel);
+            EditorUtility.SetDirty(LevelData);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+        }
+
+
         private void DrawRotationButton(float angle, string label)
         {
            

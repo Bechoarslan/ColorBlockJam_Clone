@@ -19,6 +19,7 @@ namespace RunTime.Controllers
             _collisionOffsets.Clear();
             
             // Main object is always at (0,0) relative to itself
+            _collisionOffsets.Add(Vector2Int.zero);
 
             // Register Group Shape from BlockVectorListKeys relative to main object
             var blockComp = selectedObj.GetComponent<IBlock>();
@@ -58,7 +59,7 @@ namespace RunTime.Controllers
         private float GetValidGroupPosition(float currentAnchorVal, float targetAnchorVal, float otherAxisAnchorVal, bool isXAxis)
         {
             int currentAnchorGridIdx = Mathf.RoundToInt(currentAnchorVal);
-            Debug.Log("Selected Object X Value:" + currentAnchorGridIdx + " Target X Value:" + targetAnchorVal);
+           
             float diff = targetAnchorVal - currentAnchorGridIdx;
             
            
@@ -74,7 +75,7 @@ namespace RunTime.Controllers
             int nextCellIndex = currentAnchorGridIdx + dir;
             if (IsGroupBlocked(nextCellIndex, otherAxisAnchorVal, isXAxis))
             {
-                Debug.Log("Blocked at immediate neighbor cell:" + nextCellIndex);
+               
                 return currentAnchorGridIdx;
             }
 
