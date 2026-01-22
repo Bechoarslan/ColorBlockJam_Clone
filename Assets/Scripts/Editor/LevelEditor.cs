@@ -8,31 +8,47 @@ using UnityEngine;
 
 namespace Editor
 {
-    public class LevelEditor  : EditorWindow
+    public class LevelEditor : EditorWindow
     {
         #region Self Variables
 
         #region Data Variables
 
-        private CD_LevelGridData _levelData;
-        private CD_BlockData _blockData;
-        private CD_ColorData _colorData;
+        public CD_LevelGridData LevelData { get; set; }
+        public CD_BlockData BlockData { get; set; }
+        public CD_ColorData ColorData { get; set; }
 
         #endregion
 
         #region Property Variables
 
-        private BlockType _selectedBlockType;
-        private BlockColorType _selectedBlockColorType;
-        private float _currentRotationY;
-        private int _row;
-        private int _column;
-        private int _level;
-        private Transform _levelParent;
+        public BlockType SelectedBlockType { get; set; }
+        public BlockColorType SelectedColorType { get; set; }
+        public float CurrentRotationY { get; set; }
+        public int Row { get; set; }
+        public int Column { get; set; }
+        public int LevelID { get; set; }
         
+        public GameObject Obstacle { get; set; }
+        public GameObject ObstacleCorner { get; set; }
         
-        private Dictionary<Vector2Int,bool> _activeCells = new Dictionary<Vector2Int,bool>();
-        private Dictionary<List<Vector2Int>, GameObject> _blocks = new Dictionary<List<Vector2Int>, GameObject>();
+        public GameObject Ground { get; set; }
+        public Transform LevelParent { get; set; }
+
+
+        public Dictionary<Vector2Int, bool> ActiveCellDic { get; set; } = new Dictionary<Vector2Int, bool>();
+
+        public Dictionary<List<Vector2Int>, GameObject> BlockDic { get; set; } =
+            new Dictionary<List<Vector2Int>, GameObject>();
+        
+        public List<GameObject> GroundBlockList { get; set; } = new List<GameObject>();
+
+        private VisualGridDrawer _visualGridDrawer;
+        private PrefabInspector _prefabInspector;
+        private CreateLevelGrid _createLevelGrid;
+
+        private Vector2 _scrollView;
+        public PreviewRenderUtility _previewUtility { get; set; }
         #endregion
 
         #endregion
@@ -43,161 +59,95 @@ namespace Editor
             GetWindow<LevelEditor>("Level Editor");
         }
 
-        private  void OnGUI()
+        private void OnEnable()
         {
-            GUILayout.BeginHorizontal();
+            _visualGridDrawer = new VisualGridDrawer(this);
+            _prefabInspector = new PrefabInspector(this);
+            _createLevelGrid = new CreateLevelGrid(this);
             
-            GUILayout.BeginVertical(GUILayout.Width(300));
-            
-            GUILayout.Space(20);
-           
-            DrawObjectField();
-            
-            GUILayout.EndVertical();
-            
-            
-            GUILayout.Box("", GUILayout.Width(1), GUILayout.ExpandHeight(true));
-            
-            
-            GUILayout.BeginVertical();
-            
-            GUILayout.Space(20);
-            GUILayout.Label("Grid Settings", EditorStyles.boldLabel, GUILayout.Width(100));
-            CreateVisualGrid();
-            GUILayout.EndVertical();
-            
-            
-            
-            GUILayout.EndHorizontal();
-            
-         
-     
         }
-
-        private void CreateVisualGrid()
+        private void OnDisable()
         {
-            
-            for (int x = _row - 1; x >= 0; x--)
+            if (_previewUtility != null)
             {
-                
-                GUILayout.BeginHorizontal();
-
-                for (int z = _column - 1; z >= 0; z--)
-                {
-                    Vector2Int cell = new Vector2Int(x, z);
-                    _activeCells.TryAdd(cell, false);
-                
-                    bool isActive = _activeCells[cell];
-
-                    Color oldColor = GUI.backgroundColor;
-                    GUI.backgroundColor = isActive ? Color.green : Color.gray;
-
-                    if (GUILayout.Button($"({x},{z})", GUILayout.Width(50), GUILayout.Height(50)))
-                    {
-                        
-                        if (Event.current.button == 0)
-                        {
-                            // 1️⃣ Seçili block'un offset'lerini al
-                            var blockVectorListKeys = new BlockVectorListKeys();
-                            var blockVectors =
-                                blockVectorListKeys.OnRegisterVectorList(
-                                    _selectedBlockType,
-                                    _currentRotationY
-                                );
-
-                            // 2️⃣ Önce TÜM hücreleri kontrol et (validation)
-                            bool canPlace = true;
-                            List<Vector2Int> targetCells = new List<Vector2Int>();
-                            targetCells.Add(cell);
-
-                            foreach (var vector in blockVectors)
-                            {
-                                
-                                Vector2Int targetCell =
-                                    new Vector2Int(cell.x + vector.x, cell.y + vector.y);
-                                
-                                
-                                // Grid dışında mı?
-                                if (!_activeCells.ContainsKey(targetCell))
-                                {
-                                    canPlace = false;
-                                    break;
-                                }
-
-                                // Hücre dolu mu?
-                                if (_activeCells[targetCell])
-                                {
-                                    canPlace = false;
-                                    break;
-                                }
-
-                                targetCells.Add(targetCell);
-                            }
-
-                            // 3️⃣ Eğer yerleştirilemezse → HATA VER, ÇIKIŞ
-                            if (!canPlace)
-                            {
-                                
-                                return;
-                            }
-                            
-                            // 4️⃣ TÜM hücreler uygunsa → TEK SEFERDE YERLEŞTİR
-                            foreach (var targetCell in targetCells)
-                            {
-                                
-                                _activeCells[targetCell] = true; // yeşile boya
-                            }
-
-                            // 5️⃣ Block'u tek sefer ekle (çok önemli)
-                            var obj = (GameObject)PrefabUtility.InstantiatePrefab(_blockData.Blocks[(int)_selectedBlockType].Prefab);
-                            obj.transform.position = new Vector3(x, 1, z);
-                            obj.transform.rotation = Quaternion.Euler(0, _currentRotationY, 0);
-                     
-                            _blocks.Add(targetCells, obj);
-                        }
-
-                        else if (Event.current.button == 1)
-                        {
-                            foreach (var list in _blocks.Keys)
-                            {
-                                if (list.Contains(cell))
-                                {
-                                    // Bulunan block'u sil
-                                    foreach (var targetCell in list)
-                                    {
-                                        _activeCells[targetCell] = false; // griye boya
-                                    }
-                                    DestroyImmediate(_blocks[list]);
-                                    _blocks.Remove(list);
-                                    
-                                    break;
-                                }
-                            }
-                        }
-
-                    }
-
-                    GUI.backgroundColor = oldColor;
-                }
-                
-                GUILayout.EndHorizontal();
+                _previewUtility.Cleanup();
+                _previewUtility = null;
             }
         }
+
+        private void OnGUI()
+        {
+            GUILayout.BeginHorizontal();
+
+            GUILayout.BeginVertical(GUILayout.Width(300));
+
+            GUILayout.Space(20);
+
+            DrawObjectField();
+
+            GUILayout.EndVertical();
+
+
+            GUILayout.Box("", GUILayout.Width(1), GUILayout.ExpandHeight(true));
+
+
+            GUILayout.BeginVertical();
+
+            GUILayout.Space(20);
+            GUILayout.Label("Grid Visual", EditorStyles.boldLabel, GUILayout.Width(100));
+            _scrollView = GUILayout.BeginScrollView(_scrollView, false, true, GUILayout.ExpandHeight(true),
+                GUILayout.Height(400));
+            _visualGridDrawer.DrawGridWithOutline();
+            GUILayout.EndScrollView();
+            if (GUILayout.Button("Clear Grid", GUILayout.ExpandWidth(true), GUILayout.Height(30)))
+            {
+                ActiveCellDic.Clear();
+                foreach (var block in BlockDic.Values)
+                {
+                    DestroyImmediate(block);
+                }
+
+                BlockDic.Clear();
+
+            }
+
+            GUILayout.EndVertical();
+
+
+
+            GUILayout.EndHorizontal();
+
+
+
+        }
+
 
 
         private void DrawObjectField()
         {
             DrawDescriptionText("Data Settings");
             DrawBox(5);
-            EditorGUIUtility.labelWidth = 80f;
-            _levelData = (CD_LevelGridData)EditorGUILayout.ObjectField("Level Data",_levelData, typeof(CD_LevelGridData), true, GUILayout.Width(200));
-            _blockData = (CD_BlockData)EditorGUILayout.ObjectField("Block Data",_blockData, typeof(CD_BlockData), true, GUILayout.Width(200));
-            _colorData = (CD_ColorData)EditorGUILayout.ObjectField("Color Data",_colorData, typeof(CD_ColorData), true, GUILayout.Width(200));
+            EditorGUIUtility.labelWidth = 100;
+            LevelData = (CD_LevelGridData)EditorGUILayout.ObjectField("Level Data", LevelData, typeof(CD_LevelGridData),
+                true, GUILayout.Width(200));
+            BlockData = (CD_BlockData)EditorGUILayout.ObjectField("Block Data", BlockData, typeof(CD_BlockData), true,
+                GUILayout.Width(200));
+            ColorData = (CD_ColorData)EditorGUILayout.ObjectField("Color Data", ColorData, typeof(CD_ColorData), true,
+                GUILayout.Width(200));
             DrawBox(5);
             DrawDescriptionText("Block Settings");
             GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(5));
-            _selectedBlockType = (BlockType)EditorGUILayout.EnumPopup("Block Type", _selectedBlockType, GUILayout.Width(200));
-            _selectedBlockColorType = (BlockColorType)EditorGUILayout.EnumPopup("Block Color, Type", _selectedBlockColorType, GUILayout.Width(200));
+            SelectedBlockType =
+                (BlockType)EditorGUILayout.EnumPopup("Block Type", SelectedBlockType, GUILayout.Width(200));
+            SelectedColorType =
+                (BlockColorType)EditorGUILayout.EnumPopup("Block Color", SelectedColorType, GUILayout.Width(200));
+            Obstacle = (GameObject)EditorGUILayout.ObjectField("Obstacle", Obstacle, typeof(GameObject), true,
+                GUILayout.Width(200));
+            ObstacleCorner = (GameObject)EditorGUILayout.ObjectField("Obstacle Corner", ObstacleCorner, typeof(GameObject), true,
+                GUILayout.Width(200));
+            Ground = (GameObject)EditorGUILayout.ObjectField("Ground", Ground, typeof(GameObject), true,
+                GUILayout.Width(200));
+            
             DrawBox(5);
             DrawDescriptionText("Block Rotation");
             EditorGUILayout.BeginHorizontal();
@@ -209,85 +159,77 @@ namespace Editor
             }
             EditorGUILayout.EndHorizontal();
             DrawBox(5);
-           
-            
+
+
             DrawDescriptionText("Grid Settings");
-            _row = EditorGUILayout.IntField("Row", _row, GUILayout.Width(200));
-            _column = EditorGUILayout.IntField("Column", _column, GUILayout.Width(200));
+            Row = EditorGUILayout.IntField("Row", Row, GUILayout.Width(200));
+            Column = EditorGUILayout.IntField("Column", Column, GUILayout.Width(200));
             DrawBox(5);
             DrawDescriptionText("Level Settings");
-            _level = EditorGUILayout.IntField("Level", _level, GUILayout.Width(200));
-            _levelParent = (Transform)EditorGUILayout.ObjectField("Level Parent", _levelParent, typeof(Transform), true, GUILayout.Width(200));
+            LevelID = EditorGUILayout.IntField("Level", LevelID, GUILayout.Width(200));
+            LevelParent = (Transform)EditorGUILayout.ObjectField("Level Parent", LevelParent, typeof(Transform), true,
+                GUILayout.Width(200));
             DrawBox(5);
             DrawDescriptionText("Create Level Grid");
             DrawBox(2);
-            
+
             GUILayout.BeginHorizontal();
 
             if (GUILayout.Button("Create", GUILayout.ExpandWidth(true), GUILayout.Height(30)))
             {
-                CreateLevelGrid();}
-            if(GUILayout.Button("Clear", GUILayout.ExpandWidth(true), GUILayout.Height(30))){}
-            
+                _createLevelGrid.Create();
+            }
+
+            if (GUILayout.Button("Clear", GUILayout.ExpandWidth(true), GUILayout.Height(30)))
+            {
+                _createLevelGrid.Clear();
+            }
+
             GUILayout.EndHorizontal();
             DrawBox(5);
             DrawDescriptionText("Save & Load Level Data");
             GUILayout.BeginHorizontal();
-            if(GUILayout.Button("Save", GUILayout.ExpandWidth(true), GUILayout.Height(30))){}
-            
-            if(GUILayout.Button("Load ", GUILayout.ExpandWidth(true), GUILayout.Height(30))){}
-           
+            if (GUILayout.Button("Save", GUILayout.ExpandWidth(true), GUILayout.Height(30)))
+            {
+            }
+
+            if (GUILayout.Button("Load ", GUILayout.ExpandWidth(true), GUILayout.Height(30)))
+            {
+            }
+
             GUILayout.EndHorizontal();
-          
-            DrawRotatedPreview( _blockData.Blocks[(int)_selectedBlockType].Prefab, _currentRotationY);
+
+            _prefabInspector.DrawRotatedPreview(BlockData.Blocks[(int)SelectedBlockType].Prefab, CurrentRotationY);
         }
 
+        
         private void DrawRotationButton(float angle, string label)
         {
-            // 1. Mevcut rengi hafızaya al (Böylece diğer butonlar etkilenmez)
+           
             Color defaultColor = GUI.backgroundColor;
 
-            // 2. Eğer _currentRotationY bu butondaki açıya eşitse rengi YEŞİL yap
-            // Float karşılaştırmalarında == yerine Mathf.Approximately kullanmak daha güvenlidir
-            if (Mathf.Approximately(_currentRotationY, angle))
+          
+            if (Mathf.Approximately(CurrentRotationY, angle))
             {
-                GUI.backgroundColor = Color.green; // Seçili renk
+                GUI.backgroundColor = Color.green; 
             }
             else
             {
-                GUI.backgroundColor = defaultColor; // Seçili değilse standart renk
+                GUI.backgroundColor = defaultColor; 
             }
-
-            // 3. Butonu çiz
+            
             if (GUILayout.Button(label, GUILayout.ExpandWidth(true), GUILayout.Width(80)))
             {
-                _currentRotationY = angle;
+                CurrentRotationY = angle;
             }
-
-            // 4. Rengi eski haline döndür (Sıradaki butonlar için)
+          
             GUI.backgroundColor = defaultColor;
         }
 
-        private void CreateLevelGrid()
-        {
-           for(int x = _row - 1; x >= 0; x--) 
-           {
-               for(int z = _column -1; z >= 0 ; z--)
-               {
-                   Vector3 pos = new Vector3(Mathf.RoundToInt(x),0,Mathf.RoundToInt(z));
-                   GameObject cellObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                   cellObj.transform.position = pos;
-                   if(_levelParent != null)
-                   {
-                       cellObj.transform.parent = _levelParent;
-                   }
-               }
-           }
-        }
-
+        
         private void DrawBox(float height)
         {
-           
+
             GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(height));
 
         }
@@ -298,88 +240,33 @@ namespace Editor
             style.alignment = TextAnchor.MiddleCenter;
             GUILayout.Label(text, style, GUILayout.ExpandWidth(true));
         }
-        
-        private PreviewRenderUtility _previewUtility;
 
-// Hafıza sızıntısı olmasın diye pencere kapanınca temizle
-        private void OnDisable()
+
+        public float CornerAngle(Vector2Int cornerCell)
         {
-            if (_previewUtility != null)
-            {
-                _previewUtility.Cleanup();
-                _previewUtility = null;
-            }
+            if(cornerCell.x == -1 && cornerCell.y == -1)
+                return 0f; // Bottom-left corner
+            if(cornerCell.x == -1 && cornerCell.y == Column)
+                return 90f; // Top-left corner
+            if(cornerCell.x == Row && cornerCell.y == -1)
+                return 270f; // Bottom-right corner
+            if(cornerCell.x == Row && cornerCell.y == Column)
+                return 180f; // Top-right corner
+            throw new ArgumentException("The provided cell is not a corner cell.");
         }
-        
-        private void DrawRotatedPreview(GameObject prefab, float rotationY)
-{
-    if (prefab == null) return;
 
-    // 1. Preview Utility yoksa oluştur
-    if (_previewUtility == null)
-    {
-        _previewUtility = new PreviewRenderUtility();
-        
-        // Arka plan rengi
-        _previewUtility.camera.backgroundColor = new Color(0.2f, 0.2f, 0.2f, 1f);
-        _previewUtility.camera.clearFlags = CameraClearFlags.SolidColor;
+        public bool IsCornerCell(Vector2Int cell)
+        {
+            return (cell.x == -1 && cell.y == -1) ||
+                   (cell.x == -1 && cell.y == Column) ||
+                   (cell.x == Row && cell.y == -1) ||
+                   (cell.x == Row  && cell.y == Column);
+        }
 
-        // --- BU KISMI DEĞİŞTİRİYORUZ ---
-
-        // 1. Modu Orthographic yap (Perspektifi kapatır, teknik çizim gibi düz gösterir)
-        _previewUtility.camera.orthographic = true;
-        
-        // 2. Zoom ayarı (Bu sayıyı artırırsan uzaklaşır, azaltırsan yakınlaşır)
-        _previewUtility.camera.orthographicSize = 2.0f; 
-
-        // 3. Pozisyon: Tam merkezde (0,0) ama YUKARIDA (Y=10)
-        _previewUtility.camera.transform.position = new Vector3(0, 10, 0);
-
-        // 4. Rotasyon: X ekseninde 90 derece eğ (Tam aşağı bak)
-        // Y eksenini 0 yapıyoruz ki "Yukarı" yönü Dünya'nın "İleri" (Z) yönü olsun.
-        _previewUtility.camera.transform.rotation = Quaternion.Euler(90,90, 0);
-
-        // 5. Kesme düzlemleri (Kameranın ne kadar yakını/uzağı göreceği)
-        _previewUtility.camera.nearClipPlane = 0.1f;
-        _previewUtility.camera.farClipPlane = 20f;
-    }
-    // ...
-
-    // 2. Çizim alanını al (Inspector'da 200x200 kare yer ayır)
-    Rect rect = EditorGUILayout.GetControlRect(false, 200);
-
-    // 3. Render İşlemini Başlat
-    _previewUtility.BeginPreview(rect, GUIStyle.none);
-
-    // 4. Bloğun içindeki tüm parçaları (Mesh) bul ve çiz
-    // Senin kodun "Line Block" olduğu için child objeleri taramamız lazım.
-    MeshFilter[] filters = prefab.GetComponentsInChildren<MeshFilter>();
-    
-    // Dönme işlemini burada yapıyoruz!
-    Quaternion rot = Quaternion.Euler(0, rotationY, 0);
-
-    foreach (var filter in filters)
-    {
-        Mesh mesh = filter.sharedMesh;
-        
-        // Materyali al (Yoksa standart pembe materyal olmasın diye default ata)
-        Material mat = filter.GetComponent<Renderer>()?.sharedMaterial;
-        if (mat == null) mat = new Material(Shader.Find("Standard"));
-
-        // Objenin yerel pozisyonunu, bizim döndürdüğümüz ana rotasyonla çarp
-        // Bu matematik: Child'ın yerini, ana objenin dönüşüne göre ayarlar.
-        Vector3 finalPos = rot * filter.transform.localPosition;
-        
-        // Çiz (Mesh, Pozisyon, Rotasyon, Materyal, Layer)
-        _previewUtility.DrawMesh(mesh, Matrix4x4.TRS(finalPos, rot, Vector3.one), mat, 0);
-    }
-
-    // 5. Kamerayı render et ve sonucu al
-    _previewUtility.camera.Render();
-    Texture resultTexture = _previewUtility.EndPreview();
-
-    // 6. Sonucu ekrana bas
-    GUI.DrawTexture(rect, resultTexture, ScaleMode.ScaleToFit);
-}
+        public bool IsOutlineCell(int x, int z, int totalRows, int totalCols)
+        {
+            return x == 0 || z == 0 ||
+                   x == totalRows - 1 || z == totalCols - 1;
+        }
     }
 }
