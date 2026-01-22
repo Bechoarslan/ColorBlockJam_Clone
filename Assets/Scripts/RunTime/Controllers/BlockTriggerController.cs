@@ -1,37 +1,56 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
+using RunTime.Enums;
+using RunTime.Interfaces;
 using UnityEngine;
 
 namespace RunTime.Controllers
 {
     public class BlockTriggerController : MonoBehaviour
     {
-        private Vector2Int _triggerPosition;
-        private Coroutine _destroyCoroutine;
+        [SerializeField] private int blockSize = 2;
+        
+      
+
         private void Awake()
         {
-            _triggerPosition = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.z));
+            CreateGrid();
+            
         }
 
-        private void OnTriggerStay(Collider other)
+        private void CreateGrid()
+        {
+          
+        }
+
+        private void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag("Block"))
             {
-                var blockGrid = new Vector2Int(Mathf.RoundToInt(other.transform.position.x), Mathf.RoundToInt(other.transform.position.z));
-                if(Vector2.Distance(blockGrid, _triggerPosition) < 1.1f && _destroyCoroutine is null)
+                Debug.Log("Trigger Entered by: " + other.name);
+                var iBlock = other.GetComponent<IBlock>();
+                if (iBlock is null) return;
+                if (iBlock.BlockSize > blockSize) return;
+
+                bool isMatch = true;
+                if (other.transform.forward != transform.forward)
                 {
-                    _destroyCoroutine = StartCoroutine(BlockDestroyCoroutine(other.gameObject));
-                    Debug.Log("Block is within the trigger area at position: " + _triggerPosition);
+                    Debug.Log("Block orientation does not match the trigger orientation.");
                 }
+                else
+                {
+                    Debug.Log("Block orientation matches the trigger orientation.");
+                }
+
+
+
+
+
             }
         }
 
-        private IEnumerator BlockDestroyCoroutine(GameObject otherGameObject)
-        {
-            yield return new WaitForSeconds(2f); // Wait for 2 seconds before destroying
-            Destroy(otherGameObject);
-            Debug.Log("Block destroyed at position: " + _triggerPosition);
-            _destroyCoroutine = null;
-        }
+    
+
+        
     }
 }

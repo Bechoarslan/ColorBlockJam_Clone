@@ -6,5 +6,9 @@ namespace RunTime.Interfaces
     {
         public BlockType BlockType { get; }
         
+        public int BlockSize { get; }
+        
+
+        
     }
 }

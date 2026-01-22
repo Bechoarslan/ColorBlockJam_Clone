@@ -1,3 +1,4 @@
+using System;
 using RunTime.Enums;
 using RunTime.Interfaces;
 using Sirenix.OdinInspector;
@@ -7,9 +8,9 @@ namespace RunTime.Controllers
 {
     public class Block : MonoBehaviour, IBlock
     {
-        public BlockType Type;
-        public BlockType BlockType => Type;
-        
-        
+        [SerializeField] private  BlockType type;
+        [SerializeField] private int size;
+        public BlockType BlockType => type;
+        public int BlockSize => size;
     }
 }
