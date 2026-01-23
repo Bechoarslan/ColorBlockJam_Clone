@@ -15,19 +15,26 @@ namespace RunTime.Controllers
 
         public void OnGetSelectedObject(GameObject selectedObj)
         {
-            _selectedObject = selectedObj.transform;
+            _selectedObject = selectedObj.transform.parent;
+            Debug.Log(_selectedObject.name);
             _collisionOffsets.Clear();
             
-            // Main object is always at (0,0) relative to itself
-            _collisionOffsets.Add(Vector2Int.zero);
 
-            // Register Group Shape from BlockVectorListKeys relative to main object
-            var blockComp = selectedObj.GetComponent<IBlock>();
+            for (int i = 0; i < _selectedObject.childCount; i++)
+            {
+                var child = _selectedObject.GetChild(i);
+                _collisionOffsets.Add( new Vector2Int(Mathf.RoundToInt(child.localPosition.x), Mathf.RoundToInt(child.localPosition.z)));
+
+            }
+           
+            var blockComp = _selectedObject.GetComponent<IBlock>();
             if (blockComp != null)
             {
-                var relativeOffsets = new BlockVectorListKeys().OnRegisterVectorList(blockComp.BlockType,_selectedObject.transform.eulerAngles.y);
+                
+                var relativeOffsets = new BlockVectorListKeys().CheckRotation(_collisionOffsets,_selectedObject.transform.eulerAngles.y);
                 if(relativeOffsets != null)
                 {
+                    Debug.Log(relativeOffsets);
                     _collisionOffsets.AddRange(relativeOffsets);
                 }
             }
