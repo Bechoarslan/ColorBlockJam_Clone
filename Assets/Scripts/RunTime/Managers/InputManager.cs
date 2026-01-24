@@ -1,5 +1,6 @@
 using System;
 using RunTime.Controllers;
+using RunTime.Signals;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -44,7 +45,8 @@ namespace RunTime.Managers
             _gameInput.Enable();
             _gameInput.Input.Tap.performed += OnTapPerformed;
             _gameInput.Input.Tap.canceled += OnTapCanceled;
-            
+            InputSignals.Instance.onInputStateChanged += inputController.OnInputStateChanged;
+
         }
 
         private void OnTapCanceled(InputAction.CallbackContext obj) => inputController.TapCancel(obj);
@@ -58,6 +60,7 @@ namespace RunTime.Managers
             _gameInput.Input.Tap.performed -= OnTapPerformed;
             _gameInput.Input.Tap.canceled -= OnTapCanceled;
             _gameInput.Disable();
+            InputSignals.Instance.onInputStateChanged -= inputController.OnInputStateChanged;
         }
 
         private void OnDisable()

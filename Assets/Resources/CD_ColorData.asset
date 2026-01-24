@@ -14,12 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ColorData:
   - ColorType: 0
-    Material: {fileID: 2100000, guid: ebd25bf6f5c9f40b78cf51c8586bdab8, type: 2}
+    Material: {fileID: 0}
   - ColorType: 1
-    Material: {fileID: 2100000, guid: 8c0db4a0e6af84acc8d6aa6670847413, type: 2}
+    Material: {fileID: 2100000, guid: ebd25bf6f5c9f40b78cf51c8586bdab8, type: 2}
   - ColorType: 2
-    Material: {fileID: 2100000, guid: d111ad58acd164fd29ed249f5cc3d4a7, type: 2}
+    Material: {fileID: 2100000, guid: 8c0db4a0e6af84acc8d6aa6670847413, type: 2}
   - ColorType: 3
-    Material: {fileID: 2100000, guid: c0d9a8dd350144282b4b09f81a5d6953, type: 2}
+    Material: {fileID: 2100000, guid: d111ad58acd164fd29ed249f5cc3d4a7, type: 2}
   - ColorType: 4
+    Material: {fileID: 2100000, guid: c0d9a8dd350144282b4b09f81a5d6953, type: 2}
+  - ColorType: 5
     Material: {fileID: 2100000, guid: 2220375087dfb44bb9c8c1fca6d7216b, type: 2}

@@ -5,6 +5,7 @@ using RunTime.Data.UnityObject;
 using RunTime.Data.ValueObjects;
 using RunTime.Enums;
 using RunTime.Keys;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -44,6 +45,8 @@ namespace Editor
             new Dictionary<List<Vector2Int>, GameObject>();
         
         public List<GameObject> GroundBlockList { get; set; } = new List<GameObject>();
+        public Dictionary<BlockColorType,List<GameObject>> BlockColorDic { get; set; } =
+            new Dictionary<BlockColorType, List<GameObject>>();
 
         private VisualGridDrawer _visualGridDrawer;
         private PrefabInspector _prefabInspector;
@@ -114,8 +117,10 @@ namespace Editor
                 }
 
                 BlockDic.Clear();
+                BlockColorDic.Clear();
 
             }
+      
 
             GUILayout.EndVertical();
 
@@ -223,9 +228,21 @@ namespace Editor
             {
                 LevelID = LevelID,
                 Column = Column,
-                Row = Row
+                Row = Row,
+                
+               
+                
             };
-            
+
+            foreach (var block in BlockColorDic)
+            {
+                var newBlockData = new BlockColorData
+                {
+                    BlockColorType = block.Key,
+                    Block = block.Value
+                };
+                newLevel.BlockColors.Add(newBlockData);
+            }
 
             foreach (var cell in ActiveCellDic)
             {
@@ -234,7 +251,7 @@ namespace Editor
                     GridPosition = cell.Key,
                     IsOccupied = cell.Value
                 };
-                newLevel.levels.Add(newGridData);
+                newLevel.Grids.Add(newGridData);
                 
             }
             

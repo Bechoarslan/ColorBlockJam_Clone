@@ -16,7 +16,6 @@ namespace RunTime.Controllers
         public void OnGetSelectedObject(GameObject selectedObj)
         {
             _selectedObject = selectedObj.transform.parent;
-            Debug.Log(_selectedObject.name);
             _collisionOffsets.Clear();
             
 
@@ -34,7 +33,7 @@ namespace RunTime.Controllers
                 var relativeOffsets = new BlockVectorListKeys().CheckRotation(_collisionOffsets,_selectedObject.transform.eulerAngles.y);
                 if(relativeOffsets != null)
                 {
-                    Debug.Log(relativeOffsets);
+                   
                     _collisionOffsets.AddRange(relativeOffsets);
                 }
             }

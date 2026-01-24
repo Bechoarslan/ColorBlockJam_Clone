@@ -35,8 +35,8 @@ MonoBehaviour:
     - VContainer
     - PPv2URPConverters
     - Sirenix.OdinInspector.CompatibilityLayer.Editor
-    - UniTask.Linq
     - Assembly-CSharp
+    - UniTask.Linq
     - VContainer.Editor
     - Sirenix.OdinInspector.CompatibilityLayer
     - UniTask.TextMeshPro

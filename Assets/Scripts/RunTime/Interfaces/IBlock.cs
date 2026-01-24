@@ -4,9 +4,11 @@ namespace RunTime.Interfaces
 {
     public interface IBlock
     {
-        public BlockType BlockType { get; }
+        public BlockType BlockType { get; set; }
         
-        public int BlockSize { get; }
+        public BlockColorType BlockColorType { get; set; }
+        
+        public int BlockSize { get; set; }
         
 
         

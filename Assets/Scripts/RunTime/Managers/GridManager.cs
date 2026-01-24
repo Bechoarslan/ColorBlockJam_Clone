@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using RunTime.Controllers;
 using RunTime.Data.UnityObject;
 using RunTime.Data.ValueObjects;
+using RunTime.Enums;
 using RunTime.Signals;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -24,6 +25,8 @@ namespace RunTime.Managers
 
         #region Private Variables
         [SerializeField] private Dictionary<Vector2Int,bool> _gridDictionary = new Dictionary<Vector2Int, bool>();
+        [ShowInInspector]
+        [SerializeField] private Dictionary<BlockColorType,List<GameObject>> _blockDictionary = new Dictionary<BlockColorType, List<GameObject>>();
 
         #endregion
 
@@ -36,11 +39,19 @@ namespace RunTime.Managers
 
         private void GetData()
         {
-            var data = levelData.Levels[0].levels;
-            foreach (var levelData in data)
+            var data = levelData.Levels[0];
+            foreach (var levelData in data.Grids)
             {
                 _gridDictionary.Add(new Vector2Int((int)levelData.GridPosition.x,(int)levelData.GridPosition.y),levelData.IsOccupied);
             }
+
+            foreach (var blockData in data.BlockColors)
+            {
+                _blockDictionary.Add(blockData.BlockColorType,blockData.Block);
+            }
+            
+            
+       
         }
 
         private void OnEnable()
@@ -50,6 +61,7 @@ namespace RunTime.Managers
 
         private void SubscribeEvents()
         {
+            AbilitySignals.Instance.onRemoveOccupiedGrid += ChangeOccupiedCell;
             InputSignals.Instance.onSendInputParams += blockMover.OnGetInputParams;
             InputSignals.Instance.onSendSelectedObject += blockMover.OnGetSelectedObject;
             InputSignals.Instance.onSelectedObjectReleased += blockMover.OnSelectedObjectReleased;
@@ -57,6 +69,7 @@ namespace RunTime.Managers
 
         private void UnSubscribeEvents()
         {
+            AbilitySignals.Instance.onRemoveOccupiedGrid -= ChangeOccupiedCell;
             InputSignals.Instance.onSendInputParams -= blockMover.OnGetInputParams;
             InputSignals.Instance.onSendSelectedObject -= blockMover.OnGetSelectedObject;
             InputSignals.Instance.onSelectedObjectReleased -= blockMover.OnSelectedObjectReleased;
@@ -76,7 +89,7 @@ namespace RunTime.Managers
             }
         }
 
-        [Button]
+     
         public bool IsCellOccupied(Vector2 gridPos)
         {
              var newGridPos = new Vector2Int(Mathf.RoundToInt(gridPos.x),Mathf.RoundToInt( gridPos.y));

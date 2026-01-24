@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using RunTime.Controllers;
 using RunTime.Data.UnityObject;
 using RunTime.Data.ValueObjects;
 using RunTime.Enums;
+using RunTime.Interfaces;
 using RunTime.Keys;
 using UnityEditor;
 using UnityEngine;
@@ -167,10 +169,36 @@ namespace Editor
             }
             
             var obj = (GameObject)PrefabUtility.InstantiatePrefab(Editor.BlockData.Blocks[(int)Editor.SelectedBlockType].Prefab);
+            for (int i = obj.transform.childCount - 1; i >= 0; i--)
+            {
+                var child = obj.transform.GetChild(i);
+                var renderer = child.GetComponent<MeshRenderer>();
+                renderer.sharedMaterial =
+                    Editor.ColorData.ColorData[(int)Editor.SelectedColorType].Material;
+                EditorUtility.SetDirty(renderer);
+                
+            }
+
+            var block = obj.GetComponent<Block>();
+           block.SetBlockSize( obj.transform.childCount);
+              block.SetBlockType(Editor.SelectedBlockType);
+            block.SetColorType(Editor.SelectedColorType);
+            
             obj.transform.position = new Vector3(cell.x,1, cell.y);
             obj.transform.rotation = Quaternion.Euler(0, Editor.CurrentRotationY, 0);
-                         
+            if (Editor.BlockColorDic.ContainsKey(Editor.SelectedColorType))
+            {
+                Editor.BlockColorDic[Editor.SelectedColorType].Add(obj);
+            }
+            else
+            {
+                Editor.BlockColorDic.Add(Editor.SelectedColorType, new List<GameObject> { obj });
+            }
+       
+            Debug.Log(Editor.BlockColorDic[Editor.SelectedColorType].Count);
             Editor.BlockDic.Add(targetCells, obj);
+            EditorUtility.SetDirty(block);
+            EditorUtility.SetDirty(obj);
         }
 
         private void RemoveCell(Vector2Int cell)
@@ -184,12 +212,24 @@ namespace Editor
                     {
                         Editor.ActiveCellDic[targetCell] = false; // griye boya
                     }
+                   
+                    var gameObject = Editor.BlockDic[list];
+                    var s =Editor.BlockColorDic[gameObject.GetComponent<Block>().BlockColorType];
                     UnityEngine.Object.DestroyImmediate(Editor.BlockDic[list]);
                     Editor.BlockDic.Remove(list);
+                   
+                   
+                    if (s.Contains(gameObject))
+                    {
+                        s.Remove(gameObject);
+                        
+                    }
                                         
                     break;
                 }
             }
+            
+            
         }
         
     }

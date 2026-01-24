@@ -1,3 +1,4 @@
+using RunTime.Enums;
 using RunTime.Keys;
 using RunTime.Signals;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace RunTime.Controllers
         private Plane _worldPlane;
         private Vector3 _offset;
         private InputParamKeys _inputParamKeys;
+        private GameState _gameState;
 
         public void GetReferences(Camera cam, GameInput input)
         {
@@ -24,6 +26,12 @@ namespace RunTime.Controllers
         }
 
         public void Tapped(InputAction.CallbackContext ctx)
+        {
+           GameTap();
+         
+        }
+
+        private void GameTap()
         {
             Vector2 screenPos = _gameInput.Input.ScreenPosition.ReadValue<Vector2>();
             Ray ray = mainCamera.ScreenPointToRay(screenPos);
@@ -41,16 +49,38 @@ namespace RunTime.Controllers
                     _offset = _selectedObject.position - hitPoint;
                 }
 
-                InputSignals.Instance.onSendSelectedObject?.Invoke(hit.collider.gameObject);
-                _isTapped = true;
+                switch (_gameState)
+                {
+                    case GameState.Game:
+                        InputSignals.Instance.onSendSelectedObject?.Invoke(hit.collider.gameObject);
+                        _isTapped = true;
+                        break;
+                    case GameState.Ability:
+                        Debug.Log("Ability Object Selected");
+                        AbilitySignals.Instance.onAbilitySelectedObject?.Invoke(_selectedObject);
+                        AbilitySignals.Instance.onStartAbility?.Invoke();
+                        break;
+                    case GameState.Pause:
+                        _isTapped  = false;
+                        _selectedObject = null;
+                        InputSignals.Instance.onSelectedObjectReleased?.Invoke();
+                        break;
+                }
+               
             }
         }
 
         public void TapCancel(InputAction.CallbackContext ctx)
         {
-            _isTapped = false;
-            _selectedObject = null;
-            InputSignals.Instance.onSelectedObjectReleased?.Invoke();
+            switch (_gameState)
+            {
+                case GameState.Game:
+                    _isTapped = false;
+                    _selectedObject = null;
+                    InputSignals.Instance.onSelectedObjectReleased?.Invoke();
+                    break;
+            }
+            
         }
 
         private void Update()
@@ -70,5 +100,8 @@ namespace RunTime.Controllers
                 InputSignals.Instance.onSendInputParams?.Invoke(_inputParamKeys);
             }
         }
+
+        public void OnInputStateChanged(GameState state) => _gameState = state;
+        
     }
 }
