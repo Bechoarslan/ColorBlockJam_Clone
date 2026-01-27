@@ -57,7 +57,7 @@ namespace RunTime.Managers
         private void Start()
         {
            _blockDictionary.AddRange(BlockRegistry.GetRegistry());
-           Debug.Log(_blockDictionary.Count);
+           
         }
 
         private void OnEnable()

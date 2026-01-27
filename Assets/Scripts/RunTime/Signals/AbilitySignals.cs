@@ -18,5 +18,8 @@ namespace RunTime.Signals
         public Action<BlockColorType> onRemoveObjectDestroyedByVacuum;
 
         public Action<Vector2Int,bool> onRemoveOccupiedGrid;
+
+
+        public Action<bool> onTimeAbilityActivaed;
     }
 }

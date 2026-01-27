@@ -32,6 +32,7 @@ namespace RunTime.Controllers
         private FireCrackerAbility _fireCrackerAbility;
         private HammerAbility _hammerAbility;
         private VacuumAbility _vacuumAbility;
+        private FreezeTimerAbility _freezeTimerAbility;
         #endregion
 
         #endregion
@@ -46,6 +47,7 @@ namespace RunTime.Controllers
             _fireCrackerAbility = new FireCrackerAbility(this);
             _hammerAbility = new HammerAbility(this);
             _vacuumAbility = new VacuumAbility(this);
+            _freezeTimerAbility = new FreezeTimerAbility(this);
         }
 
         private void OnEnable()
@@ -99,6 +101,9 @@ namespace RunTime.Controllers
                     break;
                 case AbilityType.Vacuum:
                     CurrentAbility = _vacuumAbility;    
+                    break;
+                case AbilityType.FreezeTime:
+                    CurrentAbility = _freezeTimerAbility;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

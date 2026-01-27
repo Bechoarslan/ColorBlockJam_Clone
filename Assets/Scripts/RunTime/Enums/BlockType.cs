@@ -7,6 +7,17 @@ namespace RunTime.Enums
         SingleBlock,
         TwoLinearBlock,
         ThreeLinearBlock,
+        SingleBlockDestroyer,
+        TripleBlockDestroyer,
+        FiveBlockDestroyer,
+        LBlockForward,
+        LBlockUp,
+        UBLockForward,
+        UBlockUp,
+        TwoLinearForward,
+        TwoLinearUp,
+        ThreeLinearForward,
+        ThreeLinearUp
        
         
     }

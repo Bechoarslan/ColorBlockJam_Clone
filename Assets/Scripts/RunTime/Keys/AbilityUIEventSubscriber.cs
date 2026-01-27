@@ -32,6 +32,7 @@ namespace RunTime.Keys
         private void SubscribeEvents()
         {
             button.onClick.AddListener(OnButtonClicked);
+            
         }
 
         private void OnButtonClicked()
@@ -43,6 +44,8 @@ namespace RunTime.Keys
                     GameSignals.Instance.onChangeGameState?.Invoke(GameState.Ability);
                     break;
                 case AbilityType.FreezeTime:
+                    AbilitySignals.Instance.onAbilitySelected?.Invoke(abilityType);
+                    AbilitySignals.Instance.onStartAbility?.Invoke();
                     break;
                 case AbilityType.Hammer:
                     AbilitySignals.Instance.onAbilitySelected?.Invoke(abilityType);
@@ -52,6 +55,7 @@ namespace RunTime.Keys
                     AbilitySignals.Instance.onAbilitySelected?.Invoke(abilityType);
                     GameSignals.Instance.onChangeGameState?.Invoke(GameState.Ability);
                     break;
+              
             }
         }
 

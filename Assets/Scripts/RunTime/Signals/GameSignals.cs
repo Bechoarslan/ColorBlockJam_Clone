@@ -7,5 +7,8 @@ namespace RunTime.Signals
     public class GameSignals : MonoSingleton<GameSignals>
     {
         public Action<GameState> onChangeGameState = delegate { };
+        
+        public Action onStartTimer = delegate { };
+        public Action onTimerFinished  = delegate { };
     }
 }
