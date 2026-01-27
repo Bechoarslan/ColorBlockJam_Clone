@@ -19,7 +19,9 @@ namespace Editor
         
         public void Create()
         {
-
+            Editor.LevelTransform = new GameObject("LevelParent");
+            Editor.LevelMeshes = new GameObject("LevelMeshes");
+            Editor.LevelMeshes.transform.SetParent( Editor.LevelTransform.transform);
             
             var totalColumn = Editor.Column + 2;
             var totalRow = Editor.Row + 2;
@@ -33,8 +35,8 @@ namespace Editor
                         Vector2Int outlineCell = new Vector2Int(x - 1, z - 1);
                         var cellList = new List<Vector2Int> { outlineCell };
                         var obstacle = Editor.IsCornerCell( outlineCell) ?
-                            PrefabUtility.InstantiatePrefab(Editor.ObstacleCorner, Editor.LevelParent) as GameObject :
-                            PrefabUtility.InstantiatePrefab(Editor.Obstacle, Editor.LevelParent) as GameObject;
+                            PrefabUtility.InstantiatePrefab(Editor.ObstacleCorner, Editor.LevelMeshes.transform) as GameObject :
+                            PrefabUtility.InstantiatePrefab(Editor.Obstacle, Editor.LevelMeshes.transform) as GameObject;
                         Editor.ActiveCellDic[outlineCell] = true;
                         Editor.BlockDic.Add(cellList,obstacle);
                         if (obstacle != null)
@@ -50,7 +52,7 @@ namespace Editor
                     else
                     {
                         Vector2Int innerCell = new Vector2Int(x - 1, z - 1);
-                        var ground = PrefabUtility.InstantiatePrefab(Editor.Ground, Editor.LevelParent) as GameObject;
+                        var ground = PrefabUtility.InstantiatePrefab(Editor.Ground, Editor.LevelMeshes.transform) as GameObject;
                         Editor.GroundBlockList.Add(ground);
                         if (ground != null)
                         {
@@ -64,6 +66,7 @@ namespace Editor
 
         public void Clear()
         {
+           
             var totalColumn = Editor.Column + 2;
             var totalRow = Editor.Row + 2;
             for (int x = totalRow- 1; x >= 0; x--)
@@ -93,10 +96,8 @@ namespace Editor
                 }
             }
 
-            foreach (var groundObj in Editor.GroundBlockList)
-            {
-                Object.DestroyImmediate(groundObj);
-            }
+            Object.DestroyImmediate(Editor.LevelTransform);
+            
         }
     }
 }

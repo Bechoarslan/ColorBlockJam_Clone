@@ -36,8 +36,11 @@ namespace Editor
         public GameObject ObstacleCorner { get; set; }
         
         public GameObject Ground { get; set; }
-        public Transform LevelParent { get; set; }
 
+
+        public GameObject LevelTransform;
+        public GameObject LevelMeshes;
+        public GameObject LevelBlocks;
 
         public Dictionary<Vector2Int, bool> ActiveCellDic { get; set; } = new Dictionary<Vector2Int, bool>();
 
@@ -45,8 +48,7 @@ namespace Editor
             new Dictionary<List<Vector2Int>, GameObject>();
         
         public List<GameObject> GroundBlockList { get; set; } = new List<GameObject>();
-        public Dictionary<BlockColorType,List<GameObject>> BlockColorDic { get; set; } =
-            new Dictionary<BlockColorType, List<GameObject>>();
+   
 
         private VisualGridDrawer _visualGridDrawer;
         private PrefabInspector _prefabInspector;
@@ -54,6 +56,8 @@ namespace Editor
 
         private Vector2 _scrollView;
         public PreviewRenderUtility _previewUtility { get; set; }
+        
+      
         #endregion
 
         #endregion
@@ -117,10 +121,10 @@ namespace Editor
                 }
 
                 BlockDic.Clear();
-                BlockColorDic.Clear();
+              
 
             }
-      
+
 
             GUILayout.EndVertical();
 
@@ -178,8 +182,6 @@ namespace Editor
             DrawBox(5);
             DrawDescriptionText("Level Settings");
             LevelID = EditorGUILayout.IntField("Level", LevelID, GUILayout.Width(200));
-            LevelParent = (Transform)EditorGUILayout.ObjectField("Level Parent", LevelParent, typeof(Transform), true,
-                GUILayout.Width(200));
             DrawBox(5);
             DrawDescriptionText("Create Level Grid");
             DrawBox(2);
@@ -216,6 +218,14 @@ namespace Editor
 
         private void SaveData()
         {
+            var level = LevelTransform;
+            
+            if (level != null)
+            {
+                level.name = $"Level_{LevelID}";
+                string path = "Assets/Resources/Levels/" + level.name + ".prefab";
+                level = PrefabUtility.SaveAsPrefabAssetAndConnect(level, path, InteractionMode.UserAction);
+            }
             foreach (var levelList in LevelData.Levels)
             {
                 if(levelList != null && levelList.LevelID == LevelID)
@@ -229,20 +239,12 @@ namespace Editor
                 LevelID = LevelID,
                 Column = Column,
                 Row = Row,
-                
+                Level = level
                
                 
             };
 
-            foreach (var block in BlockColorDic)
-            {
-                var newBlockData = new BlockColorData
-                {
-                    BlockColorType = block.Key,
-                    Block = block.Value
-                };
-                newLevel.BlockColors.Add(newBlockData);
-            }
+          
 
             foreach (var cell in ActiveCellDic)
             {

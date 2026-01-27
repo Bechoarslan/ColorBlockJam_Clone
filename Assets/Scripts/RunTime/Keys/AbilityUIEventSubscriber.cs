@@ -45,8 +45,12 @@ namespace RunTime.Keys
                 case AbilityType.FreezeTime:
                     break;
                 case AbilityType.Hammer:
+                    AbilitySignals.Instance.onAbilitySelected?.Invoke(abilityType);
+                    GameSignals.Instance.onChangeGameState?.Invoke(GameState.Ability);
                     break;
                 case AbilityType.Vacuum:
+                    AbilitySignals.Instance.onAbilitySelected?.Invoke(abilityType);
+                    GameSignals.Instance.onChangeGameState?.Invoke(GameState.Ability);
                     break;
             }
         }

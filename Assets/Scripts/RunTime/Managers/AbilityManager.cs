@@ -30,7 +30,8 @@ namespace RunTime.Controllers
 
         private AbilityType _abilityType = AbilityType.None;
         private FireCrackerAbility _fireCrackerAbility;
-        
+        private HammerAbility _hammerAbility;
+        private VacuumAbility _vacuumAbility;
         #endregion
 
         #endregion
@@ -43,6 +44,8 @@ namespace RunTime.Controllers
         private void SetAbilities()
         {
             _fireCrackerAbility = new FireCrackerAbility(this);
+            _hammerAbility = new HammerAbility(this);
+            _vacuumAbility = new VacuumAbility(this);
         }
 
         private void OnEnable()
@@ -55,6 +58,7 @@ namespace RunTime.Controllers
             AbilitySignals.Instance.onAbilitySelected += OnSwitchAbility;
             AbilitySignals.Instance.onAbilitySelectedObject += (selectedObj) => { SelectedObject = selectedObj; };
             AbilitySignals.Instance.onStartAbility += StartAbility;
+            
         }
 
         private void UnSubscribeEvents()
@@ -67,8 +71,9 @@ namespace RunTime.Controllers
 
         private void StartAbility()
         {
-            Debug.Log("Ability Started");
+           
             if (CurrentAbility is null) return;
+            Debug.Log("Ability Started");
             CurrentAbility.OnEnterAbility();
         }
 
@@ -88,6 +93,12 @@ namespace RunTime.Controllers
                     break;
                 case AbilityType.FireCracker:
                     CurrentAbility = _fireCrackerAbility;
+                    break;
+                case AbilityType.Hammer:
+                    CurrentAbility = _hammerAbility;    
+                    break;
+                case AbilityType.Vacuum:
+                    CurrentAbility = _vacuumAbility;    
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

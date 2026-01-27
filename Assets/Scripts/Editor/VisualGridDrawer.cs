@@ -106,11 +106,12 @@ namespace Editor
 
         private void AddObstacle(Vector2Int cell)
         {
+            
             if (Editor.ActiveCellDic[cell])
             {
                 return;
             }
-            var obj = (GameObject)PrefabUtility.InstantiatePrefab(Editor.Obstacle);
+            var obj = (GameObject)PrefabUtility.InstantiatePrefab(Editor.Obstacle,Editor.LevelMeshes.transform);
             obj.transform.position = new Vector3(cell.x,0.5f, cell.y);
             Editor.ActiveCellDic[cell] = true;
             var cellList = new List<Vector2Int> { cell };
@@ -120,6 +121,11 @@ namespace Editor
 
         private void AddBlock(Vector2Int cell)
         {
+            if (Editor.LevelBlocks is null)
+            {
+                Editor.LevelBlocks = new GameObject("LevelBlocks");
+                Editor.LevelBlocks.transform.SetParent(Editor.LevelTransform.transform);
+            }
             var blockVectorListKeys = new BlockVectorListKeys();
                             var blockVectors =
                                 blockVectorListKeys.OnRegisterVectorList(
@@ -168,7 +174,7 @@ namespace Editor
                 Editor.ActiveCellDic[targetCell] = true; 
             }
             
-            var obj = (GameObject)PrefabUtility.InstantiatePrefab(Editor.BlockData.Blocks[(int)Editor.SelectedBlockType].Prefab);
+            var obj = (GameObject)PrefabUtility.InstantiatePrefab(Editor.BlockData.Blocks[(int)Editor.SelectedBlockType].Prefab,Editor.LevelTransform.transform);
             for (int i = obj.transform.childCount - 1; i >= 0; i--)
             {
                 var child = obj.transform.GetChild(i);
@@ -186,16 +192,8 @@ namespace Editor
             
             obj.transform.position = new Vector3(cell.x,1, cell.y);
             obj.transform.rotation = Quaternion.Euler(0, Editor.CurrentRotationY, 0);
-            if (Editor.BlockColorDic.ContainsKey(Editor.SelectedColorType))
-            {
-                Editor.BlockColorDic[Editor.SelectedColorType].Add(obj);
-            }
-            else
-            {
-                Editor.BlockColorDic.Add(Editor.SelectedColorType, new List<GameObject> { obj });
-            }
-       
-            Debug.Log(Editor.BlockColorDic[Editor.SelectedColorType].Count);
+         
+            
             Editor.BlockDic.Add(targetCells, obj);
             EditorUtility.SetDirty(block);
             EditorUtility.SetDirty(obj);
@@ -212,19 +210,13 @@ namespace Editor
                     {
                         Editor.ActiveCellDic[targetCell] = false; // griye boya
                     }
-                   
-                    var gameObject = Editor.BlockDic[list];
-                    var s =Editor.BlockColorDic[gameObject.GetComponent<Block>().BlockColorType];
+                    
+                    
                     UnityEngine.Object.DestroyImmediate(Editor.BlockDic[list]);
                     Editor.BlockDic.Remove(list);
                    
                    
-                    if (s.Contains(gameObject))
-                    {
-                        s.Remove(gameObject);
-                        
-                    }
-                                        
+                            
                     break;
                 }
             }

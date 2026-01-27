@@ -1,6 +1,7 @@
 using System;
 using RunTime.Enums;
 using RunTime.Interfaces;
+using RunTime.Systems;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -30,7 +31,12 @@ namespace RunTime.Controllers
             get => blockSize;
             set => blockSize = value;
         }
-        
+
+        private void Awake()
+        {
+            BlockRegistry.RegisterBlock( blockColorType, this.gameObject);
+        }
+
         public void SetBlockSize(int newSize)
         {
             BlockSize = newSize;
@@ -45,6 +51,8 @@ namespace RunTime.Controllers
         {
             BlockType = blockType;
         }
+        
+        
 
         
         

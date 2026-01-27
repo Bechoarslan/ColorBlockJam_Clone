@@ -16,64 +16,29 @@ MonoBehaviour:
   - Row: 8
     Column: 8
     LevelID: 0
+    Level: {fileID: 199393824161696543, guid: f64b69016c18341e694df600a0bb3775, type: 3}
     Grids:
-    - IsOccupied: 0
-      GridPosition: {x: 0, y: 0}
-    - IsOccupied: 0
-      GridPosition: {x: 0, y: -1}
-    - IsOccupied: 0
-      GridPosition: {x: -1, y: 0}
-    - IsOccupied: 0
-      GridPosition: {x: -1, y: -1}
-    - IsOccupied: 0
-      GridPosition: {x: 8, y: 0}
-    - IsOccupied: 0
-      GridPosition: {x: 8, y: -1}
-    - IsOccupied: 0
-      GridPosition: {x: 7, y: 0}
-    - IsOccupied: 0
-      GridPosition: {x: 7, y: -1}
-    - IsOccupied: 0
-      GridPosition: {x: 6, y: 0}
-    - IsOccupied: 0
-      GridPosition: {x: 6, y: -1}
-    - IsOccupied: 0
-      GridPosition: {x: 5, y: 0}
-    - IsOccupied: 0
-      GridPosition: {x: 5, y: -1}
-    - IsOccupied: 0
-      GridPosition: {x: 4, y: 0}
-    - IsOccupied: 0
-      GridPosition: {x: 4, y: -1}
-    - IsOccupied: 0
-      GridPosition: {x: 3, y: 0}
-    - IsOccupied: 0
-      GridPosition: {x: 3, y: -1}
-    - IsOccupied: 0
-      GridPosition: {x: 2, y: 0}
-    - IsOccupied: 0
-      GridPosition: {x: 2, y: -1}
-    - IsOccupied: 0
-      GridPosition: {x: 1, y: 0}
-    - IsOccupied: 0
-      GridPosition: {x: 1, y: -1}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: 8, y: 8}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: 8, y: 7}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: 8, y: 6}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: 8, y: 5}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: 8, y: 4}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: 8, y: 3}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: 8, y: 2}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: 8, y: 1}
-    - IsOccupied: 0
+    - IsOccupied: 1
+      GridPosition: {x: 8, y: 0}
+    - IsOccupied: 1
+      GridPosition: {x: 8, y: -1}
+    - IsOccupied: 1
       GridPosition: {x: 7, y: 8}
     - IsOccupied: 0
       GridPosition: {x: 7, y: 7}
@@ -85,11 +50,15 @@ MonoBehaviour:
       GridPosition: {x: 7, y: 4}
     - IsOccupied: 0
       GridPosition: {x: 7, y: 3}
-    - IsOccupied: 1
+    - IsOccupied: 0
       GridPosition: {x: 7, y: 2}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: 7, y: 1}
-    - IsOccupied: 0
+    - IsOccupied: 1
+      GridPosition: {x: 7, y: 0}
+    - IsOccupied: 1
+      GridPosition: {x: 7, y: -1}
+    - IsOccupied: 1
       GridPosition: {x: 6, y: 8}
     - IsOccupied: 0
       GridPosition: {x: 6, y: 7}
@@ -99,19 +68,23 @@ MonoBehaviour:
       GridPosition: {x: 6, y: 5}
     - IsOccupied: 0
       GridPosition: {x: 6, y: 4}
-    - IsOccupied: 1
+    - IsOccupied: 0
       GridPosition: {x: 6, y: 3}
-    - IsOccupied: 1
+    - IsOccupied: 0
       GridPosition: {x: 6, y: 2}
     - IsOccupied: 0
       GridPosition: {x: 6, y: 1}
-    - IsOccupied: 0
+    - IsOccupied: 1
+      GridPosition: {x: 6, y: 0}
+    - IsOccupied: 1
+      GridPosition: {x: 6, y: -1}
+    - IsOccupied: 1
       GridPosition: {x: 5, y: 8}
     - IsOccupied: 0
       GridPosition: {x: 5, y: 7}
-    - IsOccupied: 0
-      GridPosition: {x: 5, y: 6}
     - IsOccupied: 1
+      GridPosition: {x: 5, y: 6}
+    - IsOccupied: 0
       GridPosition: {x: 5, y: 5}
     - IsOccupied: 0
       GridPosition: {x: 5, y: 4}
@@ -119,9 +92,13 @@ MonoBehaviour:
       GridPosition: {x: 5, y: 3}
     - IsOccupied: 0
       GridPosition: {x: 5, y: 2}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: 5, y: 1}
-    - IsOccupied: 0
+    - IsOccupied: 1
+      GridPosition: {x: 5, y: 0}
+    - IsOccupied: 1
+      GridPosition: {x: 5, y: -1}
+    - IsOccupied: 1
       GridPosition: {x: 4, y: 8}
     - IsOccupied: 0
       GridPosition: {x: 4, y: 7}
@@ -138,14 +115,18 @@ MonoBehaviour:
     - IsOccupied: 0
       GridPosition: {x: 4, y: 1}
     - IsOccupied: 0
+      GridPosition: {x: 4, y: 0}
+    - IsOccupied: 1
+      GridPosition: {x: 4, y: -1}
+    - IsOccupied: 1
       GridPosition: {x: 3, y: 8}
     - IsOccupied: 0
       GridPosition: {x: 3, y: 7}
     - IsOccupied: 0
       GridPosition: {x: 3, y: 6}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: 3, y: 5}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: 3, y: 4}
     - IsOccupied: 1
       GridPosition: {x: 3, y: 3}
@@ -154,14 +135,18 @@ MonoBehaviour:
     - IsOccupied: 0
       GridPosition: {x: 3, y: 1}
     - IsOccupied: 0
+      GridPosition: {x: 3, y: 0}
+    - IsOccupied: 1
+      GridPosition: {x: 3, y: -1}
+    - IsOccupied: 1
       GridPosition: {x: 2, y: 8}
     - IsOccupied: 0
       GridPosition: {x: 2, y: 7}
     - IsOccupied: 0
       GridPosition: {x: 2, y: 6}
-    - IsOccupied: 0
-      GridPosition: {x: 2, y: 5}
     - IsOccupied: 1
+      GridPosition: {x: 2, y: 5}
+    - IsOccupied: 0
       GridPosition: {x: 2, y: 4}
     - IsOccupied: 1
       GridPosition: {x: 2, y: 3}
@@ -169,62 +154,67 @@ MonoBehaviour:
       GridPosition: {x: 2, y: 2}
     - IsOccupied: 0
       GridPosition: {x: 2, y: 1}
-    - IsOccupied: 0
+    - IsOccupied: 1
+      GridPosition: {x: 2, y: 0}
+    - IsOccupied: 1
+      GridPosition: {x: 2, y: -1}
+    - IsOccupied: 1
       GridPosition: {x: 1, y: 8}
-    - IsOccupied: 1
+    - IsOccupied: 0
       GridPosition: {x: 1, y: 7}
-    - IsOccupied: 1
+    - IsOccupied: 0
       GridPosition: {x: 1, y: 6}
-    - IsOccupied: 1
+    - IsOccupied: 0
       GridPosition: {x: 1, y: 5}
     - IsOccupied: 0
       GridPosition: {x: 1, y: 4}
     - IsOccupied: 0
       GridPosition: {x: 1, y: 3}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: 1, y: 2}
     - IsOccupied: 0
       GridPosition: {x: 1, y: 1}
-    - IsOccupied: 0
+    - IsOccupied: 1
+      GridPosition: {x: 1, y: 0}
+    - IsOccupied: 1
+      GridPosition: {x: 1, y: -1}
+    - IsOccupied: 1
       GridPosition: {x: 0, y: 8}
     - IsOccupied: 1
       GridPosition: {x: 0, y: 7}
-    - IsOccupied: 0
-      GridPosition: {x: 0, y: 6}
     - IsOccupied: 1
+      GridPosition: {x: 0, y: 6}
+    - IsOccupied: 0
       GridPosition: {x: 0, y: 5}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: 0, y: 4}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: 0, y: 3}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: 0, y: 2}
     - IsOccupied: 0
       GridPosition: {x: 0, y: 1}
-    - IsOccupied: 0
+    - IsOccupied: 1
+      GridPosition: {x: 0, y: 0}
+    - IsOccupied: 1
+      GridPosition: {x: 0, y: -1}
+    - IsOccupied: 1
       GridPosition: {x: -1, y: 8}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: -1, y: 7}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: -1, y: 6}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: -1, y: 5}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: -1, y: 4}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: -1, y: 3}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: -1, y: 2}
-    - IsOccupied: 0
+    - IsOccupied: 1
       GridPosition: {x: -1, y: 1}
-    BlockColors:
-    - Block:
-      - {fileID: 0}
-      BlockColorType: 2
-    - Block:
-      - {fileID: 0}
-      BlockColorType: 4
-    - Block:
-      - {fileID: 0}
-      - {fileID: 0}
-      BlockColorType: 5
+    - IsOccupied: 1
+      GridPosition: {x: -1, y: 0}
+    - IsOccupied: 1
+      GridPosition: {x: -1, y: -1}

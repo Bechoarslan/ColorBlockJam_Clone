@@ -4,8 +4,11 @@ using RunTime.Controllers;
 using RunTime.Data.UnityObject;
 using RunTime.Data.ValueObjects;
 using RunTime.Enums;
+using RunTime.Interfaces;
 using RunTime.Signals;
+using RunTime.Systems;
 using Sirenix.OdinInspector;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace RunTime.Managers
@@ -25,7 +28,6 @@ namespace RunTime.Managers
 
         #region Private Variables
         [SerializeField] private Dictionary<Vector2Int,bool> _gridDictionary = new Dictionary<Vector2Int, bool>();
-        [ShowInInspector]
         [SerializeField] private Dictionary<BlockColorType,List<GameObject>> _blockDictionary = new Dictionary<BlockColorType, List<GameObject>>();
 
         #endregion
@@ -45,13 +47,17 @@ namespace RunTime.Managers
                 _gridDictionary.Add(new Vector2Int((int)levelData.GridPosition.x,(int)levelData.GridPosition.y),levelData.IsOccupied);
             }
 
-            foreach (var blockData in data.BlockColors)
-            {
-                _blockDictionary.Add(blockData.BlockColorType,blockData.Block);
-            }
+            
+            
             
             
        
+        }
+
+        private void Start()
+        {
+           _blockDictionary.AddRange(BlockRegistry.GetRegistry());
+           Debug.Log(_blockDictionary.Count);
         }
 
         private void OnEnable()
@@ -61,14 +67,57 @@ namespace RunTime.Managers
 
         private void SubscribeEvents()
         {
+            AbilitySignals.Instance.onRemoveObjectDestroyedByVacuum += OnRemoveObjectDestroyedByHammer;
+            AbilitySignals.Instance.onRemoveObjectDestroyedByHammer += OnRemoveObjectDestroyedByHammer;
             AbilitySignals.Instance.onRemoveOccupiedGrid += ChangeOccupiedCell;
             InputSignals.Instance.onSendInputParams += blockMover.OnGetInputParams;
             InputSignals.Instance.onSendSelectedObject += blockMover.OnGetSelectedObject;
             InputSignals.Instance.onSelectedObjectReleased += blockMover.OnSelectedObjectReleased;
         }
 
+        private void OnRemoveObjectDestroyedByHammer(BlockColorType type)
+        {
+            if(_blockDictionary.TryGetValue(type ,out List<GameObject> blockList))
+            {
+                foreach (var block in blockList)
+                {
+                    for (int i = block.transform.childCount; i > 0; i--)
+                    {
+                        var child = block.transform.GetChild(i - 1).gameObject;
+                        ChangeOccupiedCell(new Vector2Int(Mathf.RoundToInt(child.transform.position.x),
+                            Mathf.RoundToInt(child.transform.position.z)), false);
+                    }
+                    Destroy(block);
+                }
+                blockList.Clear();
+            }
+        }
+
+        private void OnRemoveObjectDestroyedByHammer(GameObject block,BlockColorType type)
+        {
+           
+            if (!_blockDictionary.TryGetValue(type, out List<GameObject> blockList)) return;
+            foreach (var obj in blockList)
+            {
+                Debug.Log(obj.name);
+            }
+            if (!blockList.Contains(block)) return;
+          
+            for (int i = block.transform.childCount; i > 0; i--)
+            { 
+               var child = block.transform.GetChild(i-1).gameObject;
+               ChangeOccupiedCell( new Vector2Int(Mathf.RoundToInt(child.transform.position.x),Mathf.RoundToInt(child.transform.position.z)),false);
+            }
+            blockList.Remove(block);
+            Destroy(block);
+        }
+
+        
+
         private void UnSubscribeEvents()
         {
+            AbilitySignals.Instance.onRemoveObjectDestroyedByVacuum -= OnRemoveObjectDestroyedByHammer;
+            AbilitySignals.Instance.onRemoveObjectDestroyedByHammer -= OnRemoveObjectDestroyedByHammer;
             AbilitySignals.Instance.onRemoveOccupiedGrid -= ChangeOccupiedCell;
             InputSignals.Instance.onSendInputParams -= blockMover.OnGetInputParams;
             InputSignals.Instance.onSendSelectedObject -= blockMover.OnGetSelectedObject;

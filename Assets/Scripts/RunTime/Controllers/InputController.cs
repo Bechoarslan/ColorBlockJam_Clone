@@ -33,6 +33,7 @@ namespace RunTime.Controllers
 
         private void GameTap()
         {
+            if (_isTapped) return;
             Vector2 screenPos = _gameInput.Input.ScreenPosition.ReadValue<Vector2>();
             Ray ray = mainCamera.ScreenPointToRay(screenPos);
 
@@ -57,7 +58,7 @@ namespace RunTime.Controllers
                         break;
                     case GameState.Ability:
                         Debug.Log("Ability Object Selected");
-                        AbilitySignals.Instance.onAbilitySelectedObject?.Invoke(_selectedObject);
+                        AbilitySignals.Instance.onAbilitySelectedObject?.Invoke(hit.collider.gameObject.transform);
                         AbilitySignals.Instance.onStartAbility?.Invoke();
                         break;
                     case GameState.Pause:
@@ -78,6 +79,9 @@ namespace RunTime.Controllers
                     _isTapped = false;
                     _selectedObject = null;
                     InputSignals.Instance.onSelectedObjectReleased?.Invoke();
+                    break;
+                case GameState.Ability:
+                    _isTapped = false;
                     break;
             }
             

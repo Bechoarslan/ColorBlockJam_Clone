@@ -13,6 +13,9 @@ namespace RunTime.Signals
         
         public Action<AbilityType> onAbilitySelected;
 
+        public Action<GameObject,BlockColorType> onRemoveObjectDestroyedByHammer;
+        
+        public Action<BlockColorType> onRemoveObjectDestroyedByVacuum;
 
         public Action<Vector2Int,bool> onRemoveOccupiedGrid;
     }
