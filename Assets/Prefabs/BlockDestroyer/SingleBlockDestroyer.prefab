@@ -80,9 +80,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4fed6c1cbc14c38bd655088458409fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockSize: 2
-  blockColor: 2
-  blocks: []
+  blockSize: 1
+  blockColor: 3
+  blocks:
+  - {fileID: 8680204304798282931}
   colorData: {fileID: 11400000, guid: 05b8d2cc7802949b3a01e1f102d1001d, type: 2}
   destroyParticleEffect: {fileID: 7724718391867343677}
 --- !u!65 &7162896398850383145
@@ -214,16 +215,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9184245081895121105}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: -0.62}
+  m_LocalRotation: {x: -0.5, y: -0.5, z: 0.5, w: -0.5}
+  m_LocalPosition: {x: 0, y: 0, z: -1.3290572}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5481464310703160562}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 270}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.72, y: 0}
+  m_AnchoredPosition: {x: 0.480916, y: -0.000000059604645}
   m_SizeDelta: {x: 20, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &5424354069000808136

@@ -3,6 +3,7 @@ using DG.Tweening;
 using RunTime.Data.UnityObject;
 using RunTime.Enums;
 using RunTime.Interfaces;
+using RunTime.Signals;
 using UnityEngine;
 
 namespace RunTime.Controllers
@@ -17,7 +18,7 @@ namespace RunTime.Controllers
         [SerializeField] private CD_ColorData colorData;
         [SerializeField] private ParticleSystem destroyParticleEffect;
         
-        // GateController Variables
+      
         private const float AnimDuration = 0.25f;
         private const float YMoveValue = -0.15f;
         private float _initPos;
@@ -77,8 +78,19 @@ namespace RunTime.Controllers
 
                 if (Mathf.Abs(transform.forward.x) == Mathf.Abs(parent.transform.forward.x) || otherBlock.BlockSize < blockSize)
                 {
-                    
-                    Debug.Log("Matched Block Color and Aligned Direction");
+                    destroyParticleEffect.gameObject.SetActive(true);
+                    AbsorbItem(0.25f);
+                    parent.DOMove(transform.position, 1f).OnComplete(() =>
+                    {
+                        AbilitySignals.Instance.onRemoveObjectDestroyedByHammer?.Invoke(parent.gameObject, otherBlock.BlockColorType);
+                        destroyParticleEffect.gameObject.SetActive(false);
+                    });
+                  
+
+
+
+
+
                 }
             
               
