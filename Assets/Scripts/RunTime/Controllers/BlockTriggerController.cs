@@ -74,38 +74,14 @@ namespace RunTime.Controllers
                 
              
                 if (otherBlock.BlockColorType != blockColor) return;
-                
+
+                if (Mathf.Abs(transform.forward.x) == Mathf.Abs(parent.transform.forward.x) || otherBlock.BlockSize < blockSize)
+                {
+                    
+                    Debug.Log("Matched Block Color and Aligned Direction");
+                }
             
-                BoxCollider gateCollider = GetComponent<BoxCollider>();
-                if (gateCollider != null)
-                {
-                  
-                    Vector3 gateCenter = gateCollider.bounds.center;
-                    Vector3 itemCenter = other.bounds.center;
-                    
-                    Vector3 direction = (gateCenter - itemCenter).normalized;
-                    float maxDistance = Vector3.Distance(itemCenter, gateCenter) + 0.45f;
-                    
-
-                    if (Physics.Raycast(itemCenter, direction, out _, maxDistance))
-                    {
-
-                        _isMatched = true;
-                        
-                      
-                        AbsorbItem(0.2f);
-                        
-           
-                        if (destroyParticleEffect != null) 
-                            destroyParticleEffect.Play();
-                    }
-                }
-                else
-                {
-                   
-                    _isMatched = true;
-                    AbsorbItem(0.2f);
-                }
+              
             }
         }
 
